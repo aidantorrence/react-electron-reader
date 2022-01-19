@@ -80,8 +80,6 @@ const createWindow = async () => {
     },
   });
 
-  mainWindow.setAlwaysOnTop(true)
-
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
   mainWindow.on('ready-to-show', () => {
