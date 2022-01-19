@@ -49,8 +49,13 @@ export default function App() {
   );
 
   const handleStart = useCallback(() => {
-    setCurrentWord(currentWord + 1);
-  }, [currentWord]);
+    if (currentWord < text.length) {
+      setCurrentWord(currentWord + 1)
+    } else {
+      setIsPlaying(false);
+      setCurrentWord(0);
+    }
+  }, [currentWord, text]);
 
   useEffect(() => {
     let interval: any;
