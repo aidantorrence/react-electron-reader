@@ -1,11 +1,13 @@
 import { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import './App.css';
+import { Readability } from '@mozilla/readability';
 
 export const DEFAULT_SPEED = 10;
 export const PUNCTUATION_SPEED = 6;
 
-export function splitByNCharacters(text: string, n: number) {
+export function splitByNCharacters(text: string | undefined, n: number) {
+  if (!text) return [];
   const words = text.split(/[\s]+/);
   const result = [];
   for (let i = 0; i < words.length; i++) {
@@ -50,7 +52,7 @@ export default function App() {
 
   const handleStart = useCallback(() => {
     if (currentWord < text.length) {
-      setCurrentWord(currentWord + 1)
+      setCurrentWord(currentWord + 1);
     } else {
       setIsPlaying(false);
       setCurrentWord(0);
@@ -71,6 +73,22 @@ export default function App() {
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
+
+  useEffect(() => {
+    async function fetchDocument() {
+      const response = await fetch(
+        'https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch'
+      );
+      // The API call was successful!
+      const html = await response.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const article = new Readability(doc).parse();
+      console.log(article);
+      setText(splitByNCharacters(article?.textContent, 8));
+    }
+    fetchDocument();
+  });
 
   function handlePlay() {
     setIsPlaying(!isPlaying);
