@@ -83,7 +83,6 @@ export default function App() {
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
       const article = new Readability(doc).parse();
-      console.log(article);
       setText(splitByNCharacters(article?.textContent, 8));
     }
     fetchDocument();
@@ -94,7 +93,6 @@ export default function App() {
       async function fetchURL() {
         const response = await fetch('http://localhost:8080/getUrl');
         const data = await response.json();
-        console.log(data);
         setUrl(data.url);
       }
       fetchURL();
