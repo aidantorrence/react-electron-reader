@@ -34,6 +34,7 @@ export default function App() {
   const [text, setText] = useState(
     splitByNCharacters('Hello, my name is Aidan. I am a software engineer.', 8)
   );
+  const [url, setUrl] = useState('');
   const [currentSpeed, setCurrentSpeed] = useState(DEFAULT_SPEED);
   const [currentWord, setCurrentWord] = useState(0);
 
@@ -76,9 +77,7 @@ export default function App() {
 
   useEffect(() => {
     async function fetchDocument() {
-      const response = await fetch(
-        'https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch'
-      );
+      const response = await fetch(url);
       // The API call was successful!
       const html = await response.text();
       const parser = new DOMParser();
@@ -88,7 +87,20 @@ export default function App() {
       setText(splitByNCharacters(article?.textContent, 8));
     }
     fetchDocument();
-  });
+  }, [url]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      async function fetchURL() {
+        const response = await fetch('http://localhost:8080/getUrl');
+        const data = await response.json();
+        console.log(data);
+        setUrl(data.url);
+      }
+      fetchURL();
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
 
   function handlePlay() {
     setIsPlaying(!isPlaying);
